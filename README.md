@@ -5,7 +5,7 @@ A high-performance **Fabric** optimization mod designed for **Turtle Launcher** 
 ---
 ## License
 
-This project is licensed under the MIT License unless otherwise specified.
+This project is licensed under the All Rights Reversed License.
 
 ---
 
