@@ -1,12 +1,9 @@
-# Performer Turtle Plugin
+# Performer (turtle plugin)
 
-A high-performance **Fabric** optimization mod designed for **Turtle Launcher** that improves Minecraft Java Edition performance on Android devices. Performer focuses on increasing FPS, reducing stuttering, lowering memory usage, and providing smoother gameplay while maintaining compatibility with the Fabric mod ecosystem.
+## Setup
 
----
+For setup instructions, please see the [Fabric Documentation page](https://docs.fabricmc.net/develop/getting-started/creating-a-project#setting-up) related to the IDE that you are using.
+
 ## License
 
-This project is licensed under the All Rights Reversed License.
-
----
-
-**Performer** aims to become a complete performance optimization solution for **Turtle Launcher**, combining modern rendering techniques, efficient memory management, advanced culling, and multi-threaded processing to deliver smoother Minecraft gameplay on Android devices.
+This template is available under the CC0 license. Feel free to learn from it and incorporate it in your own projects.
