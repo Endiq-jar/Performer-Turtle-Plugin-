@@ -1,0 +1,1 @@
+package com.example.performer; import java.util.concurrent.*; public class ThreadPoolManager{public static final ExecutorService EXEC=Executors.newWorkStealingPool();}

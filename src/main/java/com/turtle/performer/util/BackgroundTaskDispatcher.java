@@ -1,0 +1,1 @@
+package com.turtle.performer.util; import java.util.concurrent.*; public class BackgroundTaskDispatcher{ExecutorService ex=Executors.newCachedThreadPool(); public void submit(Runnable r){ex.submit(r);}}
