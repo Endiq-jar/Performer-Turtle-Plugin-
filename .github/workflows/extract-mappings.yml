@@ -17,16 +17,17 @@ jobs:
         run: chmod +x ./gradlew
       - name: gen mapped sources
         run: ./gradlew genSources --no-daemon
-      - name: locate sources jar
+      - name: locate sources jars
         run: |
-          find ~ -iname "*minecraft*sources*.jar" 2>/dev/null | tee /tmp/jar_path.txt
+          find ~ -iname "*sources*.jar" 2>/dev/null | grep -iv "loader\|mixin\|fabric-api\|junit\|asm-" | tee /tmp/jar_paths.txt
       - name: extract relevant class signatures
         run: |
           mkdir -p /tmp/mcsrc
-          JAR=$(cat /tmp/jar_path.txt | head -n1)
-          echo "Using jar: $JAR"
           cd /tmp/mcsrc
-          unzip -oq "$JAR"
+          while read -r JAR; do
+            echo "Unzipping: $JAR"
+            unzip -oq "$JAR" || true
+          done < /tmp/jar_paths.txt
 
           OUT=/tmp/mcsrc_signatures.txt
           echo "=== ServerLevel / server tick ===" > "$OUT"
@@ -54,13 +55,14 @@ jobs:
           find . -iname "ComparatorBlock.java" -exec grep -n "class ComparatorBlock\|calculateOutputSignal\|getOutputSignal" {} + >> "$OUT" 2>/dev/null
 
           echo "=== TickRateManager / ServerTickRateManager ===" >> "$OUT"
-          find . -iname "*TickRateManager*.java" -exec grep -n "class \|public.*tickrate\|void.*[Rr]ate" {} + >> "$OUT" 2>/dev/null
+          find . -iname "*TickRateManager*.java" -exec grep -n "class \|public.*tickrate\|void.*[Rr]ate\|tickRateManager" {} + >> "$OUT" 2>/dev/null
 
           echo "=== LevelChunkTicks / scheduled ticks ===" >> "$OUT"
           find . -iname "LevelChunkTicks.java" -exec grep -n "class LevelChunkTicks\|void schedule\|void tick" {} + >> "$OUT" 2>/dev/null
 
-          echo "=== Level blockEvent ===" >> "$OUT"
+          echo "=== Level blockEvent / getServer ===" >> "$OUT"
           find . -iname "Level.java" -exec grep -n "boolean blockEvent\|void blockEvent" {} + >> "$OUT" 2>/dev/null
+          find . -iname "ServerLevel.java" -exec grep -n "getServer()\|MinecraftServer getServer" {} + >> "$OUT" 2>/dev/null
 
           echo "=== RedstoneWireBlock ===" >> "$OUT"
           find . -iname "RedstoneWireBlock.java" -exec grep -n "class RedstoneWireBlock\|void.*[Uu]pdate" {} + >> "$OUT" 2>/dev/null
@@ -71,8 +73,34 @@ jobs:
           echo "=== LightEngine ===" >> "$OUT"
           find . -iname "*LightEngine*.java" -exec echo {} \; >> "$OUT" 2>/dev/null
 
-          echo "=== File tree (top matches only, sanity check) ===" >> "$OUT"
-          find . -iname "ServerLevel.java" -o -iname "ClientLevel.java" -o -iname "LevelRenderer.java" -o -iname "HopperBlockEntity.java" >> "$OUT" 2>/dev/null
+          echo "=== entities/ : Mob, LivingEntity, Entity tick+AI ===" >> "$OUT"
+          find . -iname "Mob.java" -exec grep -n "class Mob\|void aiStep\|void tick\|void serverAiStep\|void customServerAiStep" {} + >> "$OUT" 2>/dev/null
+          find . -iname "LivingEntity.java" -exec grep -n "class LivingEntity\|void aiStep\|void tick" {} + >> "$OUT" 2>/dev/null
+          find . -iname "Entity.java" -path "*world/entity/Entity.java" -exec grep -n "^public.*class Entity\|public void tick\b" {} + >> "$OUT" 2>/dev/null
+
+          echo "=== culling/ : Frustum, chunk section visibility ===" >> "$OUT"
+          find . -iname "Frustum.java" -exec grep -n "class Frustum\|public boolean" {} + >> "$OUT" 2>/dev/null
+          find . -iname "*SectionRenderDispatcher*.java" -o -iname "*ChunkRenderDispatcher*.java" -o -iname "*RenderSectionManager*.java" >> "$OUT" 2>/dev/null
+
+          echo "=== chunks/ : generation, storage, chunk map ===" >> "$OUT"
+          find . -iname "ServerChunkCache.java" -exec grep -n "class ServerChunkCache\|public.*tick\|getChunk" {} + >> "$OUT" 2>/dev/null
+          find . -iname "ChunkMap.java" -exec grep -n "class ChunkMap" {} + >> "$OUT" 2>/dev/null
+          find . -iname "ChunkGenerator.java" -exec grep -n "^public.*class ChunkGenerator" {} + >> "$OUT" 2>/dev/null
+
+          echo "=== memory/ : font/texture caches ===" >> "$OUT"
+          find . -iname "FontManager.java" -exec grep -n "class FontManager" {} + >> "$OUT" 2>/dev/null
+          find . -iname "TextureManager.java" -exec grep -n "class TextureManager\|void register\|void tick" {} + >> "$OUT" 2>/dev/null
+
+          echo "=== resources/ : reload, model manager ===" >> "$OUT"
+          find . -iname "*ReloadableResourceManager*.java" -exec grep -n "class .*ResourceManager" {} + >> "$OUT" 2>/dev/null
+          find . -iname "ModelManager.java" -exec grep -n "class ModelManager\|void apply\|void reload" {} + >> "$OUT" 2>/dev/null
+
+          echo "=== mesh/ : model baking, chunk section compiling ===" >> "$OUT"
+          find . -iname "ModelBakery.java" -exec grep -n "class ModelBakery" {} + >> "$OUT" 2>/dev/null
+          find . -iname "*SectionCompiler*.java" -o -iname "BlockRenderDispatcher.java" >> "$OUT" 2>/dev/null
+
+          echo "=== File tree (sanity check - which jars actually had client classes) ===" >> "$OUT"
+          find . -iname "ServerLevel.java" -o -iname "ClientLevel.java" -o -iname "LevelRenderer.java" -o -iname "HopperBlockEntity.java" -o -iname "Frustum.java" -o -iname "Mob.java" >> "$OUT" 2>/dev/null
 
           cat "$OUT"
       - name: upload signatures
