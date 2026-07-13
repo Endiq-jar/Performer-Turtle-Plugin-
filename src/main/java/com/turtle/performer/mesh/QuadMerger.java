@@ -1,1 +1,0 @@
-package com.turtle.performer.mesh; public class QuadMerger{public int merge(int f){return Math.max(1,f/2);}}
