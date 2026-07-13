@@ -1,2 +1,0 @@
-package com.turtle.performer.render;
-import java.util.*;public class RenderCommandBuffer{private final List<Runnable> cmds=new ArrayList<>();public void add(Runnable r){cmds.add(r);}public void execute(){for(Runnable r:cmds)r.run();cmds.clear();}}

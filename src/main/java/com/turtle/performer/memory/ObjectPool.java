@@ -1,2 +1,0 @@
-package com.turtle.performer.memory;
-import java.util.concurrent.*;public class ObjectPool<T>{private final ConcurrentLinkedQueue<T> q=new ConcurrentLinkedQueue<>();public T acquire(){return q.poll();}public void release(T t){if(t!=null)q.offer(t);}}
