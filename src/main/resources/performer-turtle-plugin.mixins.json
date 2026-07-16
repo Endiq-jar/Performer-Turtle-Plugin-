@@ -1,0 +1,33 @@
+{
+	"required": true,
+	"package": "com.plugin.endiq.mixin",
+	"compatibilityLevel": "JAVA_25",
+	"mixins": [
+		"ExampleMixin",
+		"HopperTickMixin",
+		"FurnaceTickMixin",
+		"RandomTickChunkMixin",
+		"RandomTickBlockMixin",
+		"RedstoneWireMixin",
+		"FluidTickMixin",
+		"PistonStructureMixin",
+		"TileEntityTickGateMixin",
+		"FastBlockUpdateMixin",
+		"ComparatorCalculateMixin",
+		"CropRandomTickMixin",
+		"ObserverUpdateMixin",
+		"ScheduledTickMixin",
+		"BlockEventMixin",
+		"DynamicTickRateMixin",
+		"MobAiThrottleMixin",
+		"LightEngineActivityMixin",
+		"ChunkAccessibleActivityMixin",
+		"LevelChunkIsTickingAccessor"
+	],
+	"injectors": {
+		"defaultRequire": 1
+	},
+	"overwrites": {
+		"requireAnnotations": true
+	}
+}
