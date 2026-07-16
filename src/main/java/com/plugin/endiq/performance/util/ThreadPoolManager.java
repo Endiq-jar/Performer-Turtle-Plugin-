@@ -1,1 +1,0 @@
-package com.plugin.endiq.performance.util;import java.util.concurrent.*;public class ThreadPoolManager{private static final ExecutorService E=Executors.newFixedThreadPool(Math.max(2,Runtime.getRuntime().availableProcessors()));public static ExecutorService get(){return E;}}

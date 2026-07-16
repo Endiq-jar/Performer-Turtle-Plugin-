@@ -1,1 +1,0 @@
-package com.turtle.performer.culling; public class DistanceCuller{public boolean shouldCull(double d,double max){return d>max;}}

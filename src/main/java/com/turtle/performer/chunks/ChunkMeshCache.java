@@ -1,2 +1,0 @@
-package com.turtle.performer.chunks;
-import java.util.concurrent.*;public class ChunkMeshCache{private final ConcurrentHashMap<Long,Object> m=new ConcurrentHashMap<>();public void put(long k,Object v){m.put(k,v);}public Object get(long k){return m.get(k);}}

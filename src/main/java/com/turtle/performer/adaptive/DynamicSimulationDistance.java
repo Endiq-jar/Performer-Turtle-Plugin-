@@ -1,2 +1,0 @@
-package com.turtle.performer.adaptive;
-public class DynamicSimulationDistance{private int distance=8;public void update(int fps){distance=fps<50?Math.max(4,distance-1):Math.min(16,distance+1);}public int get(){return distance;}}
